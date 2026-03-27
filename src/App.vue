@@ -1,11 +1,25 @@
-<script setup></script>
+<script setup>
+import { onMounted } from 'vue';
+import { usePoker } from './composables/usePoker';
+
+import CardList from './components/CardList.vue';
+import HandResult from './components/HandResult.vue';
+
+const { playerCards, boardCards, bestHand, init } = usePoker();
+
+onMounted(() => {
+  init();
+});
+</script>
 
 <template>
-  <h1>You did it!</h1>
-  <p>
-    Visit <a href="https://vuejs.org/" target="_blank" rel="noopener">vuejs.org</a> to read the
-    documentation
-  </p>
-</template>
+  <div>
+    <h2>보드</h2>
+    <CardList :cards="boardCards" />
 
-<style scoped></style>
+    <h2>내 카드</h2>
+    <CardList :cards="playerCards" />
+
+    <HandResult :hand="bestHand" />
+  </div>
+</template>
