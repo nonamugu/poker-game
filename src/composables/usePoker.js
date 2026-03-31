@@ -7,15 +7,14 @@ export function usePoker() {
   const playerCards = ref([]);
   const boardCards = ref([]);
   const bestHand = ref(null);
+  const bestCards = ref([]);
 
   function init() {
     const deck = createDeck();
     shuffle(deck);
 
-    // 👉 내 카드 2장
     playerCards.value = [deck.pop(), deck.pop()];
 
-    // 👉 보드 5장
     boardCards.value = [];
     for (let i = 0; i < 5; i++) {
       boardCards.value.push(deck.pop());
@@ -26,21 +25,31 @@ export function usePoker() {
 
   function calculateBestHand() {
     const allCards = [...playerCards.value, ...boardCards.value];
-
     const combos = getCombinations(allCards, 5);
 
     let best = null;
+    let bestCombo = null;
 
     combos.forEach((combo) => {
       const result = evaluateHand(combo);
 
       if (!best || compareHands(result, best) > 0) {
         best = result;
+        bestCombo = combo;
       }
     });
 
     bestHand.value = best;
+    bestCards.value = bestCombo;
   }
+
+  return {
+    playerCards,
+    boardCards,
+    bestHand,
+    bestCards,
+    init,
+  };
 
   function compareHands(a, b) {
     if (a.rank !== b.rank) return a.rank - b.rank;
@@ -60,6 +69,7 @@ export function usePoker() {
     playerCards,
     boardCards,
     bestHand,
+    bestCards,
     init,
   };
 }

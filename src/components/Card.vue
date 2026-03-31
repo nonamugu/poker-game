@@ -1,12 +1,12 @@
 <template>
-  <div class="card">
-    <div>{{ card.rank }}</div>
-    <div>{{ symbol }}</div>
+  <div class="card" :class="{ highlight, red: isRed }">
+    <div class="rank">{{ card.rank }}</div>
+    <div class="suit">{{ symbol }}</div>
   </div>
 </template>
 
 <script setup>
-const props = defineProps(['card']);
+const props = defineProps(['card', 'highlight']);
 
 const symbolMap = {
   spade: '♠',
@@ -16,6 +16,8 @@ const symbolMap = {
 };
 
 const symbol = symbolMap[props.card.suit];
+
+const isRed = props.card.suit === 'heart' || props.card.suit === 'diamond';
 </script>
 
 <style scoped>
@@ -24,10 +26,22 @@ const symbol = symbolMap[props.card.suit];
   height: 90px;
   border: 1px solid #333;
   border-radius: 8px;
+  background: white;
+
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: white;
+
+  transition: 0.2s;
+}
+
+.red {
+  color: red;
+}
+
+.highlight {
+  border: 3px solid gold;
+  transform: translateY(-10px);
 }
 </style>
