@@ -36,12 +36,10 @@ const isRed = props.card.suit === 'heart' || props.card.suit === 'diamond';
   transition: 0.2s;
 }
 
-/* 🔥 빨간 카드 */
 .red {
   color: red;
 }
 
-/* 🔥 강조 */
 .highlight {
   border: 3px solid gold;
   transform: translateY(-10px);

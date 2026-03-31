@@ -1,4 +1,3 @@
-// utils/handEvaluator.js
 import { HAND_RANK, RANKS } from '../constants/poker';
 
 function getRankValue(rank) {
@@ -29,7 +28,6 @@ export function evaluateHand(cards) {
     isStraight = true;
   }
 
-  // 👉 족보 판단 + 상세정보
   if (isStraight && isFlush) {
     return { rank: HAND_RANK.STRAIGHT_FLUSH, main: [unique[0]], kickers: [] };
   }

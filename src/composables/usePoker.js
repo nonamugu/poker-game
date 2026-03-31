@@ -35,7 +35,7 @@ export function usePoker() {
 
       if (!best || compareHands(result, best) > 0) {
         best = result;
-        bestCombo = combo; // 👈 이게 핵심
+        bestCombo = combo;
       }
     });
 
@@ -47,7 +47,7 @@ export function usePoker() {
     playerCards,
     boardCards,
     bestHand,
-    bestCards, // 👈 추가
+    bestCards,
     init,
   };
 
