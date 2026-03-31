@@ -34,6 +34,17 @@ const isRed = props.card.suit === 'heart' || props.card.suit === 'diamond';
   justify-content: center;
 
   transition: 0.2s;
+
+  opacity: 0;
+  transform: translateY(20px);
+  animation: deal 0.3s forwards;
+}
+
+@keyframes deal {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .red {
