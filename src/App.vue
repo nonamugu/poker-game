@@ -1,18 +1,3 @@
-<script setup>
-import { onMounted } from 'vue';
-import { usePoker } from './composables/usePoker';
-
-import CardList from './components/CardList.vue';
-import HandResult from './components/HandResult.vue';
-
-const { playerCards, boardCards, bestHand, bestCards, stage, init, nextStage } =
-  usePoker();
-
-onMounted(() => {
-  init();
-});
-</script>
-
 <template>
   <div>
     <h2>내 카드</h2>
@@ -36,3 +21,18 @@ onMounted(() => {
     <HandResult v-if="stage === 'river' || stage === 'end'" :hand="bestHand" />
   </div>
 </template>
+
+<script setup>
+import { onMounted } from 'vue';
+import { usePoker } from './composables/usePoker';
+
+import CardList from './components/CardList.vue';
+import HandResult from './components/HandResult.vue';
+
+const { playerCards, boardCards, bestHand, bestCards, stage, init, nextStage } =
+  usePoker();
+
+onMounted(() => {
+  init();
+});
+</script>

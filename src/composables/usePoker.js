@@ -8,25 +8,34 @@ export function usePoker() {
 
   const playerCards = ref([]);
   const boardCards = ref([]);
+
   const bestHand = ref(null);
   const bestCards = ref([]);
 
   const stage = ref('init');
 
-  function init() {
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  async function init() {
     deck.value = createDeck();
     shuffle(deck.value);
 
-    playerCards.value = [deck.value.pop(), deck.value.pop()];
+    playerCards.value = [];
     boardCards.value = [];
 
     stage.value = 'init';
+
+    for (let i = 0; i < 2; i++) {
+      playerCards.value.push(deck.value.pop());
+      await sleep(300);
+    }
   }
-  function nextStage() {
+
+  async function nextStage() {
     if (stage.value === 'init') {
-      boardCards.value.push(deck.value.pop());
-      boardCards.value.push(deck.value.pop());
-      boardCards.value.push(deck.value.pop());
+      await dealFlop();
       stage.value = 'flop';
     } else if (stage.value === 'flop') {
       boardCards.value.push(deck.value.pop());
@@ -36,8 +45,13 @@ export function usePoker() {
       stage.value = 'river';
 
       calculateBestHand();
-    } else if (stage.value === 'river') {
-      stage.value = 'end';
+    }
+  }
+
+  async function dealFlop() {
+    for (let i = 0; i < 3; i++) {
+      boardCards.value.push(deck.value.pop());
+      await sleep(300);
     }
   }
 
