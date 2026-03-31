@@ -4,23 +4,41 @@ import { getCombinations } from '../utils/combinations';
 import { evaluateHand } from '../utils/handEvaluator';
 
 export function usePoker() {
+  const deck = ref([]);
+
   const playerCards = ref([]);
   const boardCards = ref([]);
   const bestHand = ref(null);
   const bestCards = ref([]);
 
+  const stage = ref('init');
+
   function init() {
-    const deck = createDeck();
-    shuffle(deck);
+    deck.value = createDeck();
+    shuffle(deck.value);
 
-    playerCards.value = [deck.pop(), deck.pop()];
-
+    playerCards.value = [deck.value.pop(), deck.value.pop()];
     boardCards.value = [];
-    for (let i = 0; i < 5; i++) {
-      boardCards.value.push(deck.pop());
-    }
 
-    calculateBestHand();
+    stage.value = 'init';
+  }
+  function nextStage() {
+    if (stage.value === 'init') {
+      boardCards.value.push(deck.value.pop());
+      boardCards.value.push(deck.value.pop());
+      boardCards.value.push(deck.value.pop());
+      stage.value = 'flop';
+    } else if (stage.value === 'flop') {
+      boardCards.value.push(deck.value.pop());
+      stage.value = 'turn';
+    } else if (stage.value === 'turn') {
+      boardCards.value.push(deck.value.pop());
+      stage.value = 'river';
+
+      calculateBestHand();
+    } else if (stage.value === 'river') {
+      stage.value = 'end';
+    }
   }
 
   function calculateBestHand() {
@@ -43,14 +61,6 @@ export function usePoker() {
     bestCards.value = bestCombo;
   }
 
-  return {
-    playerCards,
-    boardCards,
-    bestHand,
-    bestCards,
-    init,
-  };
-
   function compareHands(a, b) {
     if (a.rank !== b.rank) return a.rank - b.rank;
 
@@ -70,6 +80,8 @@ export function usePoker() {
     boardCards,
     bestHand,
     bestCards,
+    stage,
     init,
+    nextStage,
   };
 }
