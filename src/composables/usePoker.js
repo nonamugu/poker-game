@@ -5,8 +5,10 @@ import { evaluateHand } from '../utils/handEvaluator';
 
 export function usePoker() {
   const deck = ref([]);
+
   const playerCards = ref([]);
   const boardCards = ref([]);
+
   const bestHand = ref(null);
   const bestCards = ref([]);
 
