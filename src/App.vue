@@ -1,21 +1,35 @@
 <template>
   <div>
-    <div v-for="player in players" :key="player.id" class="player">
-      <h3>
+    <div
+      v-for="player in players"
+      :key="player.id"
+      :class="{ loser: stage === 'river' && !winners.includes(player.id) }"
+    >
+      <h2>
         {{ player.name }}
         <span v-if="winners.includes(player.id)">🏆 승리!</span>
-      </h3>
+      </h2>
+      <HandResult v-if="stage === 'river'" :hand="player.bestHand" />
       <CardList
         :cards="player.cards"
+        :highlightCards="getHighlightCards(player)"
         :hidden="player.id !== 1 && stage !== 'river'"
       />
-      <HandResult v-if="stage === 'river'" :hand="player.bestHand" />
     </div>
 
     <h2>보드</h2>
-    <CardList :cards="boardCards" />
-
-    <button @click="nextStage" :disabled="isDealing">다음</button>
+    <CardList :cards="boardCards" :highlightCards="getBoardHighlights()" />
+    <button @click="nextStage" :disabled="isDealing">
+      {{
+        stage === 'init'
+          ? '플랍'
+          : stage === 'flop'
+            ? '턴'
+            : stage === 'turn'
+              ? '리버'
+              : '다시 시작'
+      }}
+    </button>
   </div>
 </template>
 
@@ -27,34 +41,31 @@ import CardList from './components/CardList.vue';
 import HandResult from './components/HandResult.vue';
 
 const {
-  // playerCards,
   players,
   boardCards,
-  // bestHand,
-  // bestCards,
   winners,
   stage,
   init,
   nextStage,
   isDealing,
+  getBoardHighlights,
+  getHighlightCards,
 } = usePoker();
 
 onMounted(() => {
   init();
 });
-
-// function getHandText(hand) {
-//   if (!hand) return '';
-
-//   const name = HAND_NAME[hand.rank];
-//   const main = hand.main.map((v) => RANKS[v]).join(', ');
-//   const kickers = hand.kickers.map((v) => RANKS[v]).join(', ');
-
-//   return `${name} (${main}) / 킥커: ${kickers}`;
-// }
 </script>
 
 <style>
+button {
+  width: 120px;
+  height: 40px;
+  margin: 10px;
+  background-color: aquamarine;
+  border: 0.5px solid green;
+  border-radius: 10px;
+}
 button:disabled {
   opacity: 0.5;
   cursor: not-allowed;

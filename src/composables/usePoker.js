@@ -11,9 +11,9 @@ export function usePoker() {
   const isDealing = ref(false);
 
   const players = ref([
-    { id: 1, name: '나', cards: [], bestHand: null },
-    { id: 2, name: '상대1', cards: [], bestHand: null },
-    { id: 3, name: '상대2', cards: [], bestHand: null },
+    { id: 1, name: '나', cards: [], bestHand: null, bestCards: [] },
+    { id: 2, name: '상대1', cards: [], bestHand: null, bestCards: [] },
+    { id: 3, name: '상대2', cards: [], bestHand: null, bestCards: [] },
   ]);
 
   const winners = ref([]);
@@ -78,20 +78,22 @@ export function usePoker() {
   function calculateAllHands() {
     players.value.forEach((player) => {
       const allCards = [...player.cards, ...boardCards.value];
-
       const combos = getCombinations(allCards, 5);
 
       let best = null;
+      let bestCombo = null;
 
       combos.forEach((combo) => {
         const result = evaluateHand(combo);
 
         if (!best || compareHands(result, best) > 0) {
           best = result;
+          bestCombo = combo;
         }
       });
 
       player.bestHand = best;
+      player.bestCards = bestCombo;
     });
   }
 
@@ -123,6 +125,26 @@ export function usePoker() {
     });
   }
 
+  function getBoardHighlights() {
+    if (stage.value !== 'river') return [];
+
+    const winner = players.value.find((p) => winners.value.includes(p.id));
+
+    if (!winner) return [];
+
+    return winner.bestCards;
+  }
+
+  function getHighlightCards(player) {
+    // 리버 전에는 없음
+    if (stage.value !== 'river') return [];
+
+    // 승자가 아니면 강조 없음
+    if (!winners.value.includes(player.id)) return [];
+
+    return player.bestCards;
+  }
+
   return {
     players,
     boardCards,
@@ -130,5 +152,7 @@ export function usePoker() {
     winners,
     init,
     nextStage,
+    getBoardHighlights,
+    getHighlightCards,
   };
 }
