@@ -51,8 +51,14 @@ const isRed = props.card.suit === 'heart' || props.card.suit === 'diamond';
   color: red;
 }
 
+.player.loser {
+  opacity: 0.5;
+}
+
 .highlight {
   border: 3px solid gold;
-  transform: translateY(-10px);
+  box-shadow: 0 0 10px gold;
+  transform: translateY(-10px) scale(1.05);
+  z-index: 2;
 }
 </style>
