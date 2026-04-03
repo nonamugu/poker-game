@@ -13,6 +13,7 @@ export function usePoker() {
   const bestCards = ref([]);
 
   const stage = ref('init');
+  const isDealing = ref(false);
 
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
@@ -34,6 +35,10 @@ export function usePoker() {
   }
 
   async function nextStage() {
+    if (isDealing.value) return;
+
+    isDealing.value = true;
+
     if (stage.value === 'init') {
       await dealFlop();
       stage.value = 'flop';
@@ -45,7 +50,11 @@ export function usePoker() {
       stage.value = 'river';
 
       calculateBestHand();
+    } else if (stage.value === 'river') {
+      await init();
     }
+
+    isDealing.value = false;
   }
 
   async function dealFlop() {

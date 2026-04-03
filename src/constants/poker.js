@@ -26,6 +26,7 @@ export const HAND_RANK = {
   FULL_HOUSE: 7,
   FOUR_OF_A_KIND: 8,
   STRAIGHT_FLUSH: 9,
+  ROYAL_STRAIGHT_FLUSH: 10,
 };
 
 export const HAND_NAME = {
@@ -38,4 +39,5 @@ export const HAND_NAME = {
   7: '풀하우스',
   8: '포카드',
   9: '스트레이트 플러시',
+  10: '로얄 스트레이트 플러시',
 };
