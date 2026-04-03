@@ -6,7 +6,7 @@
     <h2>보드</h2>
     <CardList :cards="boardCards" :highlightCards="bestCards" />
 
-    <button @click="nextStage">
+    <button @click="nextStage" :disabled="isDealing">
       {{
         stage === 'init'
           ? '플랍 보기'
@@ -29,10 +29,25 @@ import { usePoker } from './composables/usePoker';
 import CardList from './components/CardList.vue';
 import HandResult from './components/HandResult.vue';
 
-const { playerCards, boardCards, bestHand, bestCards, stage, init, nextStage } =
-  usePoker();
+const {
+  playerCards,
+  boardCards,
+  bestHand,
+  bestCards,
+  stage,
+  init,
+  nextStage,
+  isDealing,
+} = usePoker();
 
 onMounted(() => {
   init();
 });
 </script>
+
+<style>
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+</style>
