@@ -5,33 +5,43 @@ import { evaluateHand } from '../utils/handEvaluator';
 
 export function usePoker() {
   const deck = ref([]);
-
-  const playerCards = ref([]);
   const boardCards = ref([]);
-
-  const bestHand = ref(null);
-  const bestCards = ref([]);
 
   const stage = ref('init');
   const isDealing = ref(false);
+
+  const players = ref([
+    { id: 1, name: '나', cards: [], bestHand: null },
+    { id: 2, name: '상대1', cards: [], bestHand: null },
+    { id: 3, name: '상대2', cards: [], bestHand: null },
+  ]);
+
+  const winners = ref([]);
 
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   async function init() {
+    winners.value = [];
     deck.value = createDeck();
     shuffle(deck.value);
 
-    playerCards.value = [];
+    players.value.forEach((p) => {
+      p.cards = [];
+      p.bestHand = null;
+    });
+
     boardCards.value = [];
 
-    stage.value = 'init';
-
     for (let i = 0; i < 2; i++) {
-      playerCards.value.push(deck.value.pop());
-      await sleep(300);
+      for (const player of players.value) {
+        player.cards.push(deck.value.pop());
+        await sleep(200);
+      }
     }
+
+    stage.value = 'init';
   }
 
   async function nextStage() {
@@ -49,7 +59,8 @@ export function usePoker() {
       boardCards.value.push(deck.value.pop());
       stage.value = 'river';
 
-      calculateBestHand();
+      calculateAllHands();
+      findWinners();
     } else if (stage.value === 'river') {
       await init();
     }
@@ -64,24 +75,24 @@ export function usePoker() {
     }
   }
 
-  function calculateBestHand() {
-    const allCards = [...playerCards.value, ...boardCards.value];
-    const combos = getCombinations(allCards, 5);
+  function calculateAllHands() {
+    players.value.forEach((player) => {
+      const allCards = [...player.cards, ...boardCards.value];
 
-    let best = null;
-    let bestCombo = null;
+      const combos = getCombinations(allCards, 5);
 
-    combos.forEach((combo) => {
-      const result = evaluateHand(combo);
+      let best = null;
 
-      if (!best || compareHands(result, best) > 0) {
-        best = result;
-        bestCombo = combo;
-      }
+      combos.forEach((combo) => {
+        const result = evaluateHand(combo);
+
+        if (!best || compareHands(result, best) > 0) {
+          best = result;
+        }
+      });
+
+      player.bestHand = best;
     });
-
-    bestHand.value = best;
-    bestCards.value = bestCombo;
   }
 
   function compareHands(a, b) {
@@ -98,12 +109,25 @@ export function usePoker() {
     return 0;
   }
 
+  function findWinners() {
+    let best = null;
+    winners.value = [];
+
+    players.value.forEach((player) => {
+      if (!best || compareHands(player.bestHand, best) > 0) {
+        best = player.bestHand;
+        winners.value = [player.id];
+      } else if (compareHands(player.bestHand, best) === 0) {
+        winners.value.push(player.id);
+      }
+    });
+  }
+
   return {
-    playerCards,
+    players,
     boardCards,
-    bestHand,
-    bestCards,
     stage,
+    winners,
     init,
     nextStage,
   };
